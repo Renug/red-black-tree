@@ -12,18 +12,40 @@ tree::tree()
 
 tree::~tree()
 {
-    deleteTree(m_root);
+    if (m_nil!=m_root)
+        deleteTree(m_root);
     delete m_nil;
 }
 
 node* tree::treeMinimum(node* n)
 {
     node* no=n;
-    while(no)
+    while(no->leftNode()!=m_nil)
     {
         no=no->leftNode();
     }
     return no;
+}
+
+node* tree::treeSuccessor(node* n)
+{
+    node* retval=m_nil;
+    if(n->rightNode()!=m_nil)
+    {
+        retval=treeMinimum(n->rightNode());
+    }
+    else
+    {
+        node* y=n->parentNode();
+        node* x=n;
+        while(y!=m_nil&&x==y->rightNode())
+        {
+            x=y;
+            y=y->parentNode();
+        }
+        retval=x;
+    }
+    return retval;
 }
 
 int tree::valueForKey(std::string key)
@@ -44,30 +66,13 @@ void tree::setValueForKey(std::string key,int value)
     else
     {   
         node* newNode=new node(key,value);
+        newNode->setParentNode(m_nil);
+        newNode->setLeftNode(m_nil);
+        newNode->setRightNode(m_nil);
         insert(newNode);
     }
 }
 
-node* tree::treeSuccessor(node* n)
-{
-    node* retval=NULL;
-    if(n->rightNode()!=NULL)
-    {
-        retval=treeMinimum(n->rightNode());
-    }
-    else
-    {
-        node* y=n->parentNode();
-        node* x=n;
-        while(y!=NULL&&x==y->rightNode())
-        {
-            x=y;
-            y=y->parentNode();
-        }
-        retval=y;
-    }
-    return retval;
-}
 
 void tree::leftRotate(node* x)
 {
@@ -147,7 +152,7 @@ void tree::insert(node* z)
     z->setLeftNode(m_nil);
     z->setRightNode(m_nil);
     z->setNodeColor(red);
-//    insertFixUp(z);
+    insertFixUp(z);
 }
 
 void tree::insertFixUp(node* n)
@@ -211,8 +216,6 @@ void tree::remove(node* z)
 {
     node* y=(z->leftNode()==m_nil||z->rightNode()==m_nil)?z:treeSuccessor(z);
     node* x=m_nil!=y->leftNode()?y->leftNode():y->rightNode();
-    
-
     x->setParentNode(y->parentNode());
     if (y->parentNode()==m_nil)
     {
@@ -357,3 +360,11 @@ node* tree::findNode(std::string key)
     return NULL;
 }
 
+void tree::removeKey(std::string key)
+{
+    node* n=findNode(key);
+    if (m_nil!=n)
+    {
+        remove(n);
+    }
+}

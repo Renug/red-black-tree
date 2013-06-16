@@ -19,8 +19,11 @@ int main(int argc,char* argv[])
     {
         sprintf(buf,"%d",index);
         std::string key(buf);
-        std::cout<<t->valueForKey(key)<<std::endl;
+//        std::cout<<t->valueForKey(key)<<std::endl;
+        cout<<"remove "<<key<<endl;
+        t->removeKey(key);
     }
+    
     delete t;
     return 0;
 }

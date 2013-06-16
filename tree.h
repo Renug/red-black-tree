@@ -10,6 +10,7 @@ public:
         ~tree();
         int valueForKey(std::string key);
         void setValueForKey(std::string key,int value);
+        void removeKey(std::string key);
 private:
         node* m_root;
         node* m_nil;
